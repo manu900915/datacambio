@@ -10,6 +10,7 @@ import {
   Transaction,
   AuditLog,
   BackupSnapshot,
+  BackupConfig,
   CurrencyCode
 } from '../types';
 
@@ -295,6 +296,16 @@ export const INITIAL_ACCOUNTS: Account[] = [
     description: 'Efectivo en billetes de euros'
   }
 ];
+
+export const DEFAULT_BACKUP_CONFIG: BackupConfig = {
+  cronEnabled: true,
+  cronTime: '23:59',
+  cronFrequency: 'diario',
+  storagePath: '/opt/datacambio/backups/',
+  storageLabel: 'Disco Local de la PC del Cliente',
+  retentionDays: 30,
+  compressionType: 'gzip .sql.gz'
+};
 
 class StorageService {
   constructor() {
@@ -868,6 +879,31 @@ class StorageService {
   // ==========================================
   // BACKUPS
   // ==========================================
+  getBackupConfig(): BackupConfig {
+    return this.getItem<BackupConfig>('backup_config', DEFAULT_BACKUP_CONFIG);
+  }
+
+  saveBackupConfig(config: BackupConfig, operator?: User): BackupConfig {
+    const updated: BackupConfig = {
+      ...config,
+      lastModified: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      modifiedBy: operator ? operator.name : 'Sistema'
+    };
+    this.setItem('backup_config', updated);
+
+    if (operator) {
+      this.addAuditLog(
+        'CONFIGURACION_BACKUP_ACTUALIZADA',
+        'SystemBackup',
+        'config',
+        operator,
+        `Parámetros de backup actualizados: Cron ${config.cronEnabled ? 'Activo' : 'Pausado'} a las ${config.cronTime} (${config.cronFrequency}), Ruta: ${config.storagePath}, Retención: ${config.retentionDays} días.`
+      );
+    }
+
+    return updated;
+  }
+
   getBackups(): BackupSnapshot[] {
     return this.getItem<BackupSnapshot[]>('backups', []);
   }
@@ -875,7 +911,9 @@ class StorageService {
   createBackup(type: 'Automático Diario' | 'Manual' = 'Manual', operator?: User): BackupSnapshot {
     const now = new Date();
     const dateStr = now.toISOString().replace(/[-:T]/g, '_').substring(0, 15);
-    const filename = `cambiocuba_backup_${dateStr}.sql.gz`;
+    const config = this.getBackupConfig();
+    const ext = config.compressionType.includes('gz') ? 'sql.gz' : config.compressionType === 'zip' ? 'sql.zip' : 'json';
+    const filename = `datacambio_backup_${dateStr}.${ext}`;
 
     const totalRecords =
       this.getTransactions().length +

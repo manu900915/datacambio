@@ -134,6 +134,18 @@ export interface AuditLog {
   timestamp: string;
 }
 
+export interface BackupConfig {
+  cronEnabled: boolean;
+  cronTime: string; // e.g. "23:59"
+  cronFrequency: 'diario' | 'cada_12h' | 'semanal';
+  storagePath: string; // e.g. "/opt/datacambio/backups/"
+  storageLabel: string; // e.g. "Disco Local de la PC del Cliente"
+  retentionDays: number; // e.g. 30
+  compressionType: 'gzip .sql.gz' | 'zip' | 'json';
+  lastModified?: string;
+  modifiedBy?: string;
+}
+
 export interface BackupSnapshot {
   id: string;
   filename: string;
