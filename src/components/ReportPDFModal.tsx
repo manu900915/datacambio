@@ -52,7 +52,7 @@ export const ReportPDFModal: React.FC<ReportPDFModalProps> = ({
   const [reportTitle, setReportTitle] = useState<string>('Acta Oficial de Cierre y Liquidación de Operaciones');
   const [includeTransactions, setIncludeTransactions] = useState<boolean>(true);
   const [includeSignatures, setIncludeSignatures] = useState<boolean>(true);
-  const [notes, setNotes] = useState<string>('Documento emitido conforme a las normas de auditoría interna de CambioCuba PRO. Todos los saldos y operaciones han sido verificados contra los registros contables.');
+  const [notes, setNotes] = useState<string>('Documento emitido conforme a las normas de auditoría interna de DataCambio PRO. Todos los saldos y operaciones han sido verificados contra los registros contables.');
 
   if (!isOpen) return null;
 
@@ -176,7 +176,7 @@ export const ReportPDFModal: React.FC<ReportPDFModalProps> = ({
                   </div>
                   <div>
                     <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
-                      CambioCuba <span className="text-emerald-700">PRO</span>
+                      DataCambio <span className="text-emerald-700">PRO</span>
                     </h1>
                     <p className="text-[10px] text-slate-500 tracking-wider uppercase font-bold">
                       Sistema Integrado de Control de Divisas, Cajas & Auditoría
@@ -467,7 +467,7 @@ export const ReportPDFModal: React.FC<ReportPDFModalProps> = ({
                 </div>
 
                 <div className="mt-6 pt-3 border-t border-slate-200 text-center text-[9px] text-slate-400 font-mono">
-                  Certificado de Cierre Contable Oficial • CambioCuba PRO • Hash de Integridad: {Math.random().toString(36).substring(2, 15).toUpperCase()}
+                  Certificado de Cierre Contable Oficial • DataCambio PRO • Hash de Integridad: {Math.random().toString(36).substring(2, 15).toUpperCase()}
                 </div>
               </div>
             )}

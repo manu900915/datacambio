@@ -18,7 +18,9 @@ import {
   Shield,
   Check,
   Mail,
-  Phone
+  Phone,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { User, Role, ExchangeRate } from '../types';
 import { canAccessTab, hasPermission, AVAILABLE_PERMISSIONS } from '../services/storage';
@@ -33,6 +35,8 @@ interface NavbarProps {
   onResetAllData: () => void;
   rates: ExchangeRate[];
   onNewTransaction: () => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
   quickStats: {
     totalUSD: number;
     totalCUP: number;
@@ -50,6 +54,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onResetAllData,
   rates,
   onNewTransaction,
+  theme,
+  onToggleTheme,
   quickStats
 }) => {
   const [cubaTime, setCubaTime] = useState<string>('');
@@ -177,6 +183,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
+          {/* Botón de Modo Oscuro / Claro */}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+            className="flex items-center gap-1.5 text-[11px] text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 px-2.5 py-0.5 rounded border border-slate-800 transition-colors cursor-pointer"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Modo Claro</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Modo Oscuro</span>
+              </>
+            )}
+          </button>
+
           {/* Botón de Poner Cajas a $0 */}
           <button
             type="button"
@@ -205,7 +231,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-lg tracking-tight text-white">
-                  Cambio<span className="text-emerald-400">Cuba</span>
+                  Data<span className="text-emerald-400">Cambio</span>
                 </span>
                 <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded">
                   PRO

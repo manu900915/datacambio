@@ -76,7 +76,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             🇨🇺
           </div>
           <h2 className="text-xl font-black tracking-tight text-white">
-            CambioCuba <span className="text-emerald-200">PRO</span>
+            DataCambio <span className="text-emerald-200">PRO</span>
           </h2>
           <p className="text-xs text-emerald-100 mt-1 font-medium">
             Acceso Seguro al Sistema de Divisas & Cajas

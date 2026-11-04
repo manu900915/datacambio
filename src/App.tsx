@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { storageService, canAccessTab } from './services/storage';
 import { 
   User, 
@@ -50,6 +50,31 @@ export default function App() {
   const [isNewTxModalOpen, setIsNewTxModalOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [receiptTx, setReceiptTx] = useState<Transaction | null>(null);
+
+  // Theme state (Dark / Light)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('datacambio_theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('datacambio_theme', theme);
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    } catch {
+      // Ignorar restricciones locales
+    }
+  }, [theme]);
 
   // Quick stats for navbar
   const totalUSD = accounts.filter(a => a.currency === 'USD').reduce((s, a) => s + a.balance, 0);
@@ -136,6 +161,23 @@ export default function App() {
     setAuditLogs(storageService.getAuditLogs());
   };
 
+  const handleAddAccount = (data: Omit<Account, 'id'>) => {
+    if (!activeUser) return;
+    storageService.addAccount(data, activeUser);
+    setAccounts(storageService.getAccounts());
+    setAuditLogs(storageService.getAuditLogs());
+  };
+
+  const handleDeleteAccount = (accountId: string) => {
+    if (!activeUser) return { success: false, message: 'Usuario no autenticado' };
+    const res = storageService.deleteAccount(accountId, activeUser);
+    if (res.success) {
+      setAccounts(storageService.getAccounts());
+      setAuditLogs(storageService.getAuditLogs());
+    }
+    return res;
+  };
+
   const handleCreateBackup = (type: 'Automático Diario' | 'Manual') => {
     if (!activeUser) return;
     storageService.createBackup(type, activeUser);
@@ -149,7 +191,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cambiocuba_full_database_${new Date().toISOString().substring(0, 10)}.json`;
+    a.download = `datacambio_full_database_${new Date().toISOString().substring(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -263,6 +305,8 @@ export default function App() {
         onResetAllData={handleResetAllData}
         rates={rates}
         onNewTransaction={() => setIsNewTxModalOpen(true)}
+        theme={theme}
+        onToggleTheme={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
         quickStats={{ totalUSD, totalCUP, totalMLC }}
       />
 
@@ -333,6 +377,8 @@ export default function App() {
                 accounts={accounts}
                 activeUser={activeUser}
                 onUpdateAccountBalance={handleUpdateAccountBalance}
+                onAddAccount={handleAddAccount}
+                onDeleteAccount={handleDeleteAccount}
               />
             )}
 
@@ -379,7 +425,7 @@ export default function App() {
       <footer className="border-t border-slate-900 bg-slate-950/80 py-4 px-6 text-center text-xs text-slate-500 no-print">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
-            CambioCuba Pro © {new Date().getFullYear()} • Sistema de Gestión de Divisas y Cajas para Cuba
+            DataCambio Pro © {new Date().getFullYear()} • Sistema de Gestión de Divisas y Cajas para Cuba
           </div>
           <div className="flex items-center gap-4 text-[11px]">
             <span className="text-emerald-400">● Sesión Autenticada: @{activeUser.username}</span>

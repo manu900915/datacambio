@@ -200,7 +200,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
         <div className="p-8 bg-white text-slate-900 rounded-2xl border border-slate-300 shadow-2xl font-mono text-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-800 pb-4">
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-900">CAMBIOCUBA PRO</h1>
+              <h1 className="text-xl font-black tracking-tight text-slate-900">DATACAMBIO PRO</h1>
               <p className="text-sm font-semibold text-slate-700 uppercase">Acta Oficial de Cierre y Liquidación de Operaciones</p>
               <p className="text-xs text-slate-500">Período: {getPeriodLabel()} • Generado el {new Date().toLocaleString('es-CU')}</p>
             </div>

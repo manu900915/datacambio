@@ -696,6 +696,54 @@ class StorageService {
     );
   }
 
+  addAccount(data: Omit<Account, 'id'>, operator: User): Account {
+    const accounts = this.getAccounts();
+    const newAcc: Account = {
+      ...data,
+      id: 'acc-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6)
+    };
+    const updated = [...accounts, newAcc];
+    this.setItem('accounts', updated);
+
+    this.addAuditLog(
+      'NUEVA_CAJA_CUENTA',
+      'Account',
+      newAcc.id,
+      operator,
+      `Creación de nueva cuenta/caja "${newAcc.name}" (${newAcc.currency}, ${newAcc.accountType === 'efectivo' ? 'Efectivo' : 'Banca/Tarjeta'}) con saldo inicial de ${newAcc.balance} ${newAcc.currency}.`
+    );
+
+    return newAcc;
+  }
+
+  deleteAccount(accountId: string, operator: User): { success: boolean; message?: string } {
+    const accounts = this.getAccounts();
+    const acc = accounts.find(a => a.id === accountId);
+    if (!acc) {
+      return { success: false, message: 'La cuenta o caja no existe.' };
+    }
+
+    if (acc.balance !== 0) {
+      return {
+        success: false,
+        message: `No se puede eliminar la cuenta "${acc.name}" porque tiene un saldo activo de $${acc.balance.toLocaleString()} ${acc.currency}. Realiza un arqueo o transferencia para dejarla en 0 antes de eliminarla.`
+      };
+    }
+
+    const updated = accounts.filter(a => a.id !== accountId);
+    this.setItem('accounts', updated);
+
+    this.addAuditLog(
+      'ELIMINAR_CAJA_CUENTA',
+      'Account',
+      accountId,
+      operator,
+      `Eliminación de cuenta/caja "${acc.name}" (${acc.currency}, ${acc.accountType}).`
+    );
+
+    return { success: true };
+  }
+
   // ==========================================
   // TRANSACTIONS (Sin datos de ejemplo, 100% limpia)
   // ==========================================
@@ -866,7 +914,7 @@ class StorageService {
     const dump = {
       version: '2.0.0',
       exportedAt: new Date().toISOString(),
-      appName: 'CambioCuba Pro',
+      appName: 'DataCambio Pro',
       data: {
         users: this.getUsers(),
         roles: this.getRoles(),
