@@ -15,6 +15,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Transaction, User, ExchangeRate } from '../types';
+import { ReportPDFModal } from './ReportPDFModal';
 
 interface ReportsViewProps {
   transactions: Transaction[];
@@ -33,6 +34,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   const [customStartDate, setCustomStartDate] = useState<string>('');
   const [customEndDate, setCustomEndDate] = useState<string>('');
   const [showClosingSheet, setShowClosingSheet] = useState<boolean>(false);
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState<boolean>(false);
 
   // Filter transactions according to period
   const reportTransactions = useMemo(() => {
@@ -138,14 +140,15 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition-colors cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>{showClosingSheet ? 'Ocultar Acta de Cierre' : 'Generar Acta de Cierre'}</span>
+            <span>{showClosingSheet ? 'Ocultar Acta en Pantalla' : 'Ver Acta en Pantalla'}</span>
           </button>
           <button
-            onClick={handlePrint}
-            className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-emerald-500/20 transition-all cursor-pointer"
+            onClick={() => setIsPDFModalOpen(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 text-xs font-black px-4 py-2 rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Imprimir / Exportar Reporte</span>
+            <span>Exportar Reporte a PDF</span>
+            <span className="bg-slate-950/20 text-slate-950 text-[10px] px-1.5 py-0.5 rounded font-mono font-bold">A4</span>
           </button>
         </div>
       </div>
@@ -195,10 +198,21 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
       {/* Printable Cash Closing Sheet (Acta Oficial de Arqueo y Cierre) */}
       {showClosingSheet && (
         <div className="p-8 bg-white text-slate-900 rounded-2xl border border-slate-300 shadow-2xl font-mono text-xs space-y-6">
-          <div className="text-center border-b-2 border-slate-800 pb-4">
-            <h1 className="text-xl font-black tracking-tight text-slate-900">CAMBIOCUBA PRO</h1>
-            <p className="text-sm font-semibold text-slate-700 uppercase">Acta Oficial de Cierre y Liquidación de Operaciones</p>
-            <p className="text-xs text-slate-500">Período: {getPeriodLabel()} • Generado el {new Date().toLocaleString('es-CU')}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-slate-800 pb-4">
+            <div>
+              <h1 className="text-xl font-black tracking-tight text-slate-900">CAMBIOCUBA PRO</h1>
+              <p className="text-sm font-semibold text-slate-700 uppercase">Acta Oficial de Cierre y Liquidación de Operaciones</p>
+              <p className="text-xs text-slate-500">Período: {getPeriodLabel()} • Generado el {new Date().toLocaleString('es-CU')}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPDFModalOpen(true)}
+              className="no-print self-start sm:self-center flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow transition-all active:scale-95 cursor-pointer"
+              title="Abrir vista previa y exportar a PDF"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Exportar a PDF A4</span>
+            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4 border-b border-slate-300 pb-4">
@@ -400,6 +414,34 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Modal de Exportación a PDF estilo Acta Oficial */}
+      <ReportPDFModal
+        isOpen={isPDFModalOpen}
+        onClose={() => setIsPDFModalOpen(false)}
+        periodLabel={getPeriodLabel()}
+        transactions={reportTransactions}
+        rates={rates}
+        activeUser={activeUser}
+        stats={{
+          totalOperations,
+          buysCount: buys.length,
+          sellsCount: sells.length,
+          buyVolumeUSD,
+          sellVolumeUSD,
+          buyVolumeEUR,
+          sellVolumeEUR,
+          buyVolumeMLC,
+          sellVolumeMLC,
+          totalCUPPaidOut,
+          totalCUPReceived,
+          totalCUPTurnover,
+          totalSpreadProfitCUP,
+          avgTicketCUP,
+          methodStats,
+          operatorStats
+        }}
+      />
     </div>
   );
 };
