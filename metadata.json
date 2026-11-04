@@ -1,0 +1,6 @@
+{
+  "name": "CambioCuba Pro - Gestión de Divisas y Cajas",
+  "description": "Sistema integral de compra y venta de divisas en Cuba (USD, CUP, MLC, EUR) con control de tasas, auditoría de accesos, reportes financieros y paquete de despliegue Laravel CI/CD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
