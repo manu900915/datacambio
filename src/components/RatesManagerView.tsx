@@ -109,7 +109,7 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
       }
     }
 
-    onUpdateRate(selectedCurrency, numBuyRate, numSellRate, note);
+    onUpdateRate(selectedCurrency, numBuyRate, numSellRate, note || 'Ajuste de tasa');
     setSuccessMsg(`Tasa de ${selectedCurrency} actualizada exitosamente a Compra: ${numBuyRate} CUP | Venta: ${numSellRate} CUP.`);
     setNote('');
     setTimeout(() => setSuccessMsg(null), 4000);
@@ -352,7 +352,8 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
               </div>
             </div>
 
-            {/* Presets de Mercado Cubano */}
+            {/* Plantillas de Mercado y Motivo de Auditoría - Ocultos temporalmente a solicitud */}
+            {/*
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-2">
                 Plantillas & Referencias Rápidas del Mercado:
@@ -422,7 +423,6 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
               </div>
             </div>
 
-            {/* Note / Audit Reason */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Motivo / Justificación del Cambio (Auditoría):
@@ -436,6 +436,7 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50"
               />
             </div>
+            */}
 
             {/* Action */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-800">
