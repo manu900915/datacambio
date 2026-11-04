@@ -32,7 +32,8 @@ jobs:
     name: 💻 Auto-Despliegue en PC Local (GitHub Runner)
     needs: test_and_build
     if: github.ref == 'refs/heads/main'
-    # Se ejecuta en la PC del usuario si registró un Self-Hosted Runner de GitHub
+    # Espera máximo 5 minutos por si tu PC tiene el runner encendido
+    timeout-minutes: 5
     runs-on: self-hosted
     continue-on-error: true
 
