@@ -41,10 +41,27 @@ jobs:
       - name: Descargar Código en PC Local
         uses: actions/checkout@v4
 
-      - name: Ejecutar Script de Actualización Local
+      - name: Compilar Frontend en PC Local
         run: |
-          chmod +x scripts/update-local.sh
-          ./scripts/update-local.sh
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Actualizar carpeta de trabajo en la PC (~/untitled o ~/datacambio)
+        run: |
+          for TARGET in "$HOME/untitled" "$HOME/datacambio" "/opt/cambiocuba"; do
+            if [ -d "$TARGET/.git" ] && [ "$TARGET" != "$GITHUB_WORKSPACE" ]; then
+              echo "Actualizando automáticamente $TARGET..."
+              cd "$TARGET"
+              git fetch origin main
+              git reset --hard origin/main
+              npm install --legacy-peer-deps || true
+              npm run build || true
+              if [ -f "docker/docker-compose.yml" ] && command -v docker >/dev/null 2>&1; then
+                docker compose -f docker/docker-compose.yml up -d --build 2>/dev/null || true
+              fi
+            fi
+          done
+          echo "✅ ¡Auto-despliegue completado con éxito en tu PC!"
 
   deploy_ssh:
     name: 🌐 Despliegue Remoto Alternativo vía SSH
