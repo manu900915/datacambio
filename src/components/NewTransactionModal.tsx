@@ -321,7 +321,7 @@ export const NewTransactionModal: React.FC<NewTransactionModalProps> = ({
             </div>
 
             {/* Total CUP Result Banner */}
-            <div className="p-3 bg-gradient-to-r from-slate-900 to-slate-850 rounded-xl border border-slate-700/80 flex items-center justify-between">
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-700/80 flex items-center justify-between">
               <div>
                 <span className="text-xs text-slate-400 uppercase tracking-wider block">
                   {type === 'compra' ? 'Total en CUP a entregar al cliente:' : 'Total en CUP a cobrar al cliente:'}
