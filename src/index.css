@@ -73,21 +73,38 @@
 }
 
 /* ==========================================================================
-   Generic Light Mode Overrides (DataCambio PRO)
+   Complete High-Contrast Light Mode Engine (DataCambio PRO)
    ========================================================================== */
-html.light body {
+html.light,
+.light {
+  color-scheme: light;
+}
+
+html.light body,
+.light body {
   background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
+/* Base Surfaces & Backgrounds */
 html.light .bg-slate-950,
+html.light .bg-slate-950\/95,
 html.light .bg-slate-950\/90,
 html.light .bg-slate-950\/85,
 html.light .bg-slate-950\/80,
 html.light .bg-slate-950\/70,
 html.light .bg-slate-950\/60,
 html.light .bg-slate-950\/50,
-html.light .bg-slate-950\/40 {
+html.light .bg-slate-950\/40,
+.light .bg-slate-950,
+.light .bg-slate-950\/95,
+.light .bg-slate-950\/90,
+.light .bg-slate-950\/85,
+.light .bg-slate-950\/80,
+.light .bg-slate-950\/70,
+.light .bg-slate-950\/60,
+.light .bg-slate-950\/50,
+.light .bg-slate-950\/40 {
   background-color: #f1f5f9 !important;
 }
 
@@ -95,7 +112,12 @@ html.light .bg-slate-900,
 html.light .bg-slate-900\/95,
 html.light .bg-slate-900\/90,
 html.light .bg-slate-900\/80,
-html.light .bg-slate-900\/70 {
+html.light .bg-slate-900\/70,
+.light .bg-slate-900,
+.light .bg-slate-900\/95,
+.light .bg-slate-900\/90,
+.light .bg-slate-900\/80,
+.light .bg-slate-900\/70 {
   background-color: #ffffff !important;
 }
 
@@ -105,63 +127,277 @@ html.light .bg-slate-800\/80,
 html.light .bg-slate-800\/70,
 html.light .bg-slate-800\/60,
 html.light .bg-slate-800\/50,
-html.light .bg-slate-800\/40 {
-  background-color: #e2e8f0 !important;
-  color: #1e293b !important;
+html.light .bg-slate-800\/40,
+.light .bg-slate-800,
+.light .bg-slate-800\/90,
+.light .bg-slate-800\/80,
+.light .bg-slate-800\/70,
+.light .bg-slate-800\/60,
+.light .bg-slate-800\/50,
+.light .bg-slate-800\/40 {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
 }
 
 html.light .hover\:bg-slate-800:hover,
 html.light .hover\:bg-slate-800\/90:hover,
+html.light .hover\:bg-slate-800\/40:hover,
 html.light .hover\:bg-slate-700:hover,
-html.light .hover\:bg-slate-700\/90:hover {
-  background-color: #cbd5e1 !important;
+html.light .hover\:bg-slate-700\/90:hover,
+.light .hover\:bg-slate-800:hover,
+.light .hover\:bg-slate-800\/90:hover,
+.light .hover\:bg-slate-800\/40:hover,
+.light .hover\:bg-slate-700:hover,
+.light .hover\:bg-slate-700\/90:hover {
+  background-color: #e2e8f0 !important;
 }
 
+/* Borders */
 html.light .border-slate-800,
 html.light .border-slate-800\/80,
 html.light .border-slate-800\/60,
 html.light .border-slate-800\/40,
 html.light .border-slate-700,
-html.light .border-slate-700\/80 {
+html.light .border-slate-700\/80,
+.light .border-slate-800,
+.light .border-slate-800\/80,
+.light .border-slate-800\/60,
+.light .border-slate-800\/40,
+.light .border-slate-700,
+.light .border-slate-700\/80 {
   border-color: #e2e8f0 !important;
 }
 
-html.light .border-slate-600 {
+html.light .border-slate-600,
+.light .border-slate-600 {
   border-color: #cbd5e1 !important;
 }
 
+html.light .divide-slate-800 > :not([hidden]) ~ :not([hidden]),
+.light .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0 !important;
+}
+
+/* Typography & Contrast Colors */
 html.light .text-white,
 html.light .text-slate-100,
-html.light .text-slate-200 {
+html.light .text-slate-200,
+.light .text-white,
+.light .text-slate-100,
+.light .text-slate-200 {
   color: #0f172a !important;
 }
 
-html.light .text-slate-300 {
+html.light .text-slate-300,
+.light .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-400,
+.light .text-slate-400 {
   color: #334155 !important;
 }
 
-html.light .text-slate-400 {
+html.light .text-slate-500,
+.light .text-slate-500 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-600,
+.light .text-slate-600 {
   color: #64748b !important;
 }
 
-html.light .text-slate-500 {
-  color: #94a3b8 !important;
+html.light .text-slate-700,
+.light .text-slate-700 {
+  color: #334155 !important;
 }
 
+html.light .text-slate-800,
+.light .text-slate-800 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-900,
+.light .text-slate-900 {
+  color: #0f172a !important;
+}
+
+/* Accent Text & Financial Highlights (High-contrast for white surfaces) */
+html.light .text-emerald-500,
+html.light .text-emerald-400,
+html.light .text-emerald-300,
+.light .text-emerald-500,
+.light .text-emerald-400,
+.light .text-emerald-300 {
+  color: #047857 !important; /* Deep emerald-700 */
+}
+
+html.light .text-blue-500,
+html.light .text-blue-400,
+html.light .text-blue-300,
+.light .text-blue-500,
+.light .text-blue-400,
+.light .text-blue-300 {
+  color: #1d4ed8 !important; /* Deep blue-700 */
+}
+
+html.light .text-amber-500,
+html.light .text-amber-400,
+html.light .text-amber-300,
+.light .text-amber-500,
+.light .text-amber-400,
+.light .text-amber-300 {
+  color: #b45309 !important; /* Warm amber-700, fully readable */
+}
+
+html.light .text-cyan-500,
+html.light .text-cyan-400,
+html.light .text-cyan-300,
+.light .text-cyan-500,
+.light .text-cyan-400,
+.light .text-cyan-300 {
+  color: #0369a1 !important; /* Deep sky-700 */
+}
+
+html.light .text-purple-500,
+html.light .text-purple-400,
+html.light .text-purple-300,
+.light .text-purple-500,
+.light .text-purple-400,
+.light .text-purple-300 {
+  color: #7e22ce !important; /* Rich purple-700 */
+}
+
+html.light .text-red-500,
+html.light .text-red-400,
+html.light .text-red-300,
+.light .text-red-500,
+.light .text-red-400,
+.light .text-red-300 {
+  color: #b91c1c !important; /* Strong red-700 */
+}
+
+/* Badges & Pill Tints */
+html.light .bg-emerald-500\/10,
+html.light .bg-emerald-500\/20,
+.light .bg-emerald-500\/10,
+.light .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #a7f3d0 !important;
+}
+
+html.light .bg-blue-500\/10,
+html.light .bg-blue-500\/20,
+.light .bg-blue-500\/10,
+.light .bg-blue-500\/20 {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  border-color: #bfdbfe !important;
+}
+
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/20,
+.light .bg-amber-500\/10,
+.light .bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #fde68a !important;
+}
+
+html.light .bg-purple-500\/10,
+html.light .bg-purple-500\/20,
+html.light .bg-purple-950\/40,
+.light .bg-purple-500\/10,
+.light .bg-purple-500\/20,
+.light .bg-purple-950\/40 {
+  background-color: #f3e8ff !important;
+  color: #6b21a8 !important;
+  border-color: #e9d5ff !important;
+}
+
+html.light .bg-red-500\/10,
+html.light .bg-red-500\/20,
+.light .bg-red-500\/10,
+.light .bg-red-500\/20 {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fecaca !important;
+}
+
+html.light .bg-cyan-500\/10,
+html.light .bg-cyan-500\/20,
+.light .bg-cyan-500\/10,
+.light .bg-cyan-500\/20 {
+  background-color: #e0f2fe !important;
+  color: #075985 !important;
+  border-color: #bae6fd !important;
+}
+
+/* Inputs, Selects & Form Controls */
 html.light input:not([type="checkbox"]):not([type="radio"]),
 html.light select,
-html.light textarea {
+html.light textarea,
+.light input:not([type="checkbox"]):not([type="radio"]),
+.light select,
+.light textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
 
-html.light input::placeholder,
-html.light textarea::placeholder {
-  color: #94a3b8 !important;
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus,
+.light input:focus,
+.light select:focus,
+.light textarea:focus {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2) !important;
 }
 
+html.light input::placeholder,
+html.light textarea::placeholder,
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Tables & Data Grids */
+html.light thead,
+.light thead {
+  background-color: #f1f5f9 !important;
+}
+
+html.light thead th,
+.light thead th {
+  color: #334155 !important;
+  font-weight: 700 !important;
+}
+
+html.light tbody tr:hover,
+.light tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* SVGs & Icons */
+html.light svg,
+.light svg {
+  opacity: 1 !important;
+}
+
+/* Images & Avatars */
+html.light img,
+.light img {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Shadows */
 html.light .shadow-xl,
-html.light .shadow-2xl {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+html.light .shadow-2xl,
+.light .shadow-xl,
+.light .shadow-2xl {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
 }

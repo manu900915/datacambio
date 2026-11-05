@@ -55,7 +55,17 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const saved = localStorage.getItem('datacambio_theme');
-      return saved === 'light' ? 'light' : 'dark';
+      const activeTheme = saved === 'light' ? 'light' : 'dark';
+      if (typeof document !== 'undefined') {
+        if (activeTheme === 'light') {
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        }
+      }
+      return activeTheme;
     } catch {
       return 'dark';
     }
@@ -293,7 +303,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+    <div className={`min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950 ${theme === 'light' ? 'light bg-slate-50 text-slate-900' : 'bg-slate-950 text-slate-100'}`}>
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
