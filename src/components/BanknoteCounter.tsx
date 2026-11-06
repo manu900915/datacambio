@@ -10,7 +10,11 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
-  FileText
+  FileText,
+  Banknote,
+  Landmark,
+  ShieldCheck,
+  BadgeCheck
 } from 'lucide-react';
 import { CurrencyCode } from '../types';
 
@@ -18,14 +22,11 @@ export interface BanknoteDenomination {
   value: number;
   label: string;
   portrait: string;
-  theme: {
-    bgGradient: string;
-    border: string;
-    text: string;
-    accent: string;
-    ribbonColor?: string;
-  };
-  issuer: string;
+  issuerCode: string;
+  badgeBg: string;
+  iconBg: string;
+  borderColor: string;
+  textColor: string;
 }
 
 // 1. Moneda Nacional CUP: 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000
@@ -34,157 +35,131 @@ export const CUP_DENOMINATIONS: BanknoteDenomination[] = [
     value: 1,
     label: '1 CUP',
     portrait: 'José Martí',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-emerald-950 via-slate-900 to-emerald-900',
-      border: 'border-emerald-700/60',
-      text: 'text-emerald-300',
-      accent: 'bg-emerald-500/20 text-emerald-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-emerald-900/90',
+    iconBg: 'bg-emerald-600',
+    borderColor: 'border-emerald-400',
+    textColor: 'text-emerald-200'
   },
   {
     value: 5,
     label: '5 CUP',
     portrait: 'Antonio Maceo',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-teal-950 via-slate-900 to-teal-900',
-      border: 'border-teal-700/60',
-      text: 'text-teal-300',
-      accent: 'bg-teal-500/20 text-teal-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-teal-900/90',
+    iconBg: 'bg-teal-600',
+    borderColor: 'border-teal-400',
+    textColor: 'text-teal-200'
   },
   {
     value: 10,
     label: '10 CUP',
     portrait: 'Máximo Gómez',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-amber-950 via-slate-900 to-amber-900',
-      border: 'border-amber-700/60',
-      text: 'text-amber-300',
-      accent: 'bg-amber-500/20 text-amber-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-amber-900/90',
+    iconBg: 'bg-amber-600',
+    borderColor: 'border-amber-400',
+    textColor: 'text-amber-200'
   },
   {
     value: 20,
     label: '20 CUP',
     portrait: 'Camilo Cienfuegos',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-sky-950 via-slate-900 to-blue-900',
-      border: 'border-sky-700/60',
-      text: 'text-sky-300',
-      accent: 'bg-sky-500/20 text-sky-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-sky-900/90',
+    iconBg: 'bg-sky-600',
+    borderColor: 'border-sky-400',
+    textColor: 'text-sky-200'
   },
   {
     value: 50,
     label: '50 CUP',
     portrait: 'Calixto García',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-purple-950 via-slate-900 to-indigo-900',
-      border: 'border-purple-700/60',
-      text: 'text-purple-300',
-      accent: 'bg-purple-500/20 text-purple-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-purple-900/90',
+    iconBg: 'bg-purple-600',
+    borderColor: 'border-purple-400',
+    textColor: 'text-purple-200'
   },
   {
     value: 100,
     label: '100 CUP',
     portrait: 'Carlos M. de Céspedes',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-rose-950 via-slate-900 to-red-900',
-      border: 'border-rose-700/60',
-      text: 'text-rose-300',
-      accent: 'bg-rose-500/20 text-rose-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-red-900/90',
+    iconBg: 'bg-rose-600',
+    borderColor: 'border-rose-400',
+    textColor: 'text-rose-200'
   },
   {
     value: 200,
     label: '200 CUP',
     portrait: 'Frank País',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-orange-950 via-slate-900 to-amber-900',
-      border: 'border-orange-600/60',
-      text: 'text-orange-300',
-      accent: 'bg-orange-500/20 text-orange-300'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-orange-900/90',
+    iconBg: 'bg-orange-600',
+    borderColor: 'border-orange-400',
+    textColor: 'text-orange-200'
   },
   {
     value: 500,
     label: '500 CUP',
     portrait: 'Ignacio Agramonte',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-emerald-950 via-slate-900 to-green-900',
-      border: 'border-emerald-500/70',
-      text: 'text-emerald-200',
-      accent: 'bg-emerald-500/25 text-emerald-200'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-green-900/90',
+    iconBg: 'bg-green-600',
+    borderColor: 'border-green-400',
+    textColor: 'text-green-200'
   },
   {
     value: 1000,
     label: '1000 CUP',
     portrait: 'Julio Antonio Mella',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-violet-950 via-slate-900 to-fuchsia-900',
-      border: 'border-violet-500/70',
-      text: 'text-violet-200',
-      accent: 'bg-violet-500/25 text-violet-200'
-    }
+    issuerCode: 'BCC',
+    badgeBg: 'bg-fuchsia-900/90',
+    iconBg: 'bg-fuchsia-600',
+    borderColor: 'border-fuchsia-400',
+    textColor: 'text-fuchsia-200'
   },
   {
     value: 2000,
     label: '2000 CUP',
-    portrait: 'Emisión Especial 2K',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-cyan-950 via-slate-900 to-blue-900',
-      border: 'border-cyan-500/70',
-      text: 'text-cyan-200',
-      accent: 'bg-cyan-500/25 text-cyan-200'
-    }
+    portrait: 'Serie Especial 2K',
+    issuerCode: 'BCC',
+    badgeBg: 'bg-blue-900/90',
+    iconBg: 'bg-blue-600',
+    borderColor: 'border-blue-400',
+    textColor: 'text-blue-200'
   },
   {
     value: 5000,
     label: '5000 CUP',
-    portrait: 'Serie Alta Denom 5K',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-teal-950 via-slate-900 to-emerald-900',
-      border: 'border-teal-400/70',
-      text: 'text-teal-200',
-      accent: 'bg-teal-500/25 text-teal-200'
-    }
+    portrait: 'Serie Alta 5K',
+    issuerCode: 'BCC',
+    badgeBg: 'bg-teal-950/90',
+    iconBg: 'bg-emerald-600',
+    borderColor: 'border-emerald-300',
+    textColor: 'text-emerald-100'
   },
   {
     value: 10000,
     label: '10000 CUP',
-    portrait: 'Serie Alta Denom 10K',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-indigo-950 via-slate-900 to-purple-900',
-      border: 'border-indigo-400/70',
-      text: 'text-indigo-200',
-      accent: 'bg-indigo-500/25 text-indigo-200'
-    }
+    portrait: 'Serie Alta 10K',
+    issuerCode: 'BCC',
+    badgeBg: 'bg-indigo-900/90',
+    iconBg: 'bg-indigo-600',
+    borderColor: 'border-indigo-400',
+    textColor: 'text-indigo-200'
   },
   {
     value: 20000,
     label: '20000 CUP',
-    portrait: 'Serie Especial 20K',
-    issuer: 'BANCO CENTRAL DE CUBA',
-    theme: {
-      bgGradient: 'from-yellow-950 via-slate-900 to-amber-900',
-      border: 'border-yellow-400/70',
-      text: 'text-yellow-200',
-      accent: 'bg-yellow-500/25 text-yellow-200'
-    }
+    portrait: 'Serie Oro 20K',
+    issuerCode: 'BCC',
+    badgeBg: 'bg-yellow-900/90',
+    iconBg: 'bg-amber-600',
+    borderColor: 'border-yellow-400',
+    textColor: 'text-yellow-200'
   }
 ];
 
@@ -194,90 +169,77 @@ export const USD_DENOMINATIONS: BanknoteDenomination[] = [
     value: 1,
     label: '1 USD',
     portrait: 'George Washington',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-emerald-950 via-slate-900 to-emerald-900',
-      border: 'border-emerald-700/60',
-      text: 'text-emerald-300',
-      accent: 'bg-emerald-500/20 text-emerald-300'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-emerald-900/90',
+    iconBg: 'bg-emerald-600',
+    borderColor: 'border-emerald-400',
+    textColor: 'text-emerald-200'
   },
   {
     value: 5,
     label: '5 USD',
     portrait: 'Abraham Lincoln',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-slate-950 via-slate-900 to-indigo-950',
-      border: 'border-indigo-600/50',
-      text: 'text-indigo-200',
-      accent: 'bg-indigo-500/20 text-indigo-200'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-slate-900/90',
+    iconBg: 'bg-indigo-600',
+    borderColor: 'border-indigo-400',
+    textColor: 'text-indigo-200'
   },
   {
     value: 10,
     label: '10 USD',
     portrait: 'Alexander Hamilton',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-amber-950 via-slate-900 to-yellow-950',
-      border: 'border-amber-600/50',
-      text: 'text-amber-200',
-      accent: 'bg-amber-500/20 text-amber-200'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-amber-900/90',
+    iconBg: 'bg-amber-600',
+    borderColor: 'border-amber-400',
+    textColor: 'text-amber-200'
   },
   {
     value: 20,
     label: '20 USD',
     portrait: 'Andrew Jackson',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-emerald-950 via-slate-900 to-teal-950',
-      border: 'border-teal-600/50',
-      text: 'text-teal-200',
-      accent: 'bg-teal-500/20 text-teal-200'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-teal-900/90',
+    iconBg: 'bg-teal-600',
+    borderColor: 'border-teal-400',
+    textColor: 'text-teal-200'
   },
   {
     value: 50,
     label: '50 USD',
     portrait: 'Ulysses S. Grant',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-rose-950 via-slate-900 to-blue-950',
-      border: 'border-blue-500/50',
-      text: 'text-rose-200',
-      accent: 'bg-blue-500/20 text-rose-200'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-rose-900/90',
+    iconBg: 'bg-rose-600',
+    borderColor: 'border-blue-400',
+    textColor: 'text-rose-200'
   },
   {
     value: 100,
     label: '100 USD',
     portrait: 'Benjamin Franklin',
-    issuer: 'FEDERAL RESERVE NOTE',
-    theme: {
-      bgGradient: 'from-cyan-950 via-slate-900 to-blue-900',
-      border: 'border-cyan-400/70',
-      text: 'text-cyan-200',
-      accent: 'bg-cyan-500/25 text-cyan-200',
-      ribbonColor: '#06b6d4'
-    }
+    issuerCode: 'USA FED',
+    badgeBg: 'bg-cyan-900/90',
+    iconBg: 'bg-cyan-600',
+    borderColor: 'border-cyan-300',
+    textColor: 'text-cyan-100'
   }
 ];
 
-// 3. Euros EUR (Soporte complementario para caja en Euros)
+// 3. Euros EUR (Soporte complementario)
 export const EUR_DENOMINATIONS: BanknoteDenomination[] = [
-  { value: 5, label: '5 EUR', portrait: 'Clásico / Gris', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-slate-950 to-slate-900', border: 'border-slate-600/50', text: 'text-slate-300', accent: 'bg-slate-700/40 text-slate-300' } },
-  { value: 10, label: '10 EUR', portrait: 'Románico / Rojo', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-rose-950 to-slate-900', border: 'border-rose-600/50', text: 'text-rose-300', accent: 'bg-rose-500/20 text-rose-300' } },
-  { value: 20, label: '20 EUR', portrait: 'Gótico / Azul', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-blue-950 to-slate-900', border: 'border-blue-600/50', text: 'text-blue-300', accent: 'bg-blue-500/20 text-blue-300' } },
-  { value: 50, label: '50 EUR', portrait: 'Renacimiento / Naranja', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-orange-950 to-slate-900', border: 'border-orange-600/50', text: 'text-orange-300', accent: 'bg-orange-500/20 text-orange-300' } },
-  { value: 100, label: '100 EUR', portrait: 'Barroco / Verde', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-emerald-950 to-slate-900', border: 'border-emerald-600/50', text: 'text-emerald-300', accent: 'bg-emerald-500/20 text-emerald-300' } },
-  { value: 200, label: '200 EUR', portrait: 'Hierro y Cristal / Amarillo', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-yellow-950 to-slate-900', border: 'border-yellow-600/50', text: 'text-yellow-300', accent: 'bg-yellow-500/20 text-yellow-300' } },
-  { value: 500, label: '500 EUR', portrait: 'Moderno / Violeta', issuer: 'EUROPEAN CENTRAL BANK', theme: { bgGradient: 'from-purple-950 to-slate-900', border: 'border-purple-600/50', text: 'text-purple-300', accent: 'bg-purple-500/20 text-purple-300' } },
+  { value: 5, label: '5 EUR', portrait: 'Clásico / Gris', issuerCode: 'BCE', badgeBg: 'bg-slate-800/90', iconBg: 'bg-slate-600', borderColor: 'border-slate-400', textColor: 'text-slate-200' },
+  { value: 10, label: '10 EUR', portrait: 'Románico / Rojo', issuerCode: 'BCE', badgeBg: 'bg-rose-900/90', iconBg: 'bg-rose-600', borderColor: 'border-rose-400', textColor: 'text-rose-200' },
+  { value: 20, label: '20 EUR', portrait: 'Gótico / Azul', issuerCode: 'BCE', badgeBg: 'bg-blue-900/90', iconBg: 'bg-blue-600', borderColor: 'border-blue-400', textColor: 'text-blue-200' },
+  { value: 50, label: '50 EUR', portrait: 'Renacimiento / Naranja', issuerCode: 'BCE', badgeBg: 'bg-orange-900/90', iconBg: 'bg-orange-600', borderColor: 'border-orange-400', textColor: 'text-orange-200' },
+  { value: 100, label: '100 EUR', portrait: 'Barroco / Verde', issuerCode: 'BCE', badgeBg: 'bg-emerald-900/90', iconBg: 'bg-emerald-600', borderColor: 'border-emerald-400', textColor: 'text-emerald-200' },
+  { value: 200, label: '200 EUR', portrait: 'Hierro / Amarillo', issuerCode: 'BCE', badgeBg: 'bg-yellow-900/90', iconBg: 'bg-yellow-600', borderColor: 'border-yellow-400', textColor: 'text-yellow-200' },
+  { value: 500, label: '500 EUR', portrait: 'Moderno / Violeta', issuerCode: 'BCE', badgeBg: 'bg-purple-900/90', iconBg: 'bg-purple-600', borderColor: 'border-purple-400', textColor: 'text-purple-200' },
 ];
 
 /**
- * Componente visual de Billete Miniatura Vectorial Estilizado
+ * Componente visual de Icono & Ficha de Billete de Referencia
  */
 export const BanknoteMiniCard: React.FC<{
   denom: BanknoteDenomination;
@@ -286,64 +248,51 @@ export const BanknoteMiniCard: React.FC<{
 }> = ({ denom, currency, count }) => {
   const isUSD = currency === 'USD';
   const isCUP = currency === 'CUP';
+  const flag = isCUP ? '🇨🇺' : isUSD ? '🇺🇸' : '🇪🇺';
 
   return (
     <div 
-      className={`relative w-28 h-16 sm:w-32 sm:h-18 rounded-lg p-1.5 flex flex-col justify-between overflow-hidden shadow-md border ${denom.theme.border} bg-gradient-to-br ${denom.theme.bgGradient} select-none shrink-0 transition-transform hover:scale-105`}
+      className={`relative w-36 h-20 rounded-xl p-2 flex flex-col justify-between overflow-hidden shadow-lg border-2 ${denom.borderColor} ${denom.badgeBg} select-none shrink-0 transition-transform hover:scale-105`}
     >
-      {/* Guilloche / Security Pattern Grid Overlay */}
-      <div 
-        className="absolute inset-0 opacity-15 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 50% 50%, currentColor 1px, transparent 1px)',
-          backgroundSize: '6px 6px'
-        }}
-      />
-
-      {/* Banda de Seguridad / 3D Ribbon para billetes especiales (ej. 100 USD) */}
-      {denom.theme.ribbonColor && (
-        <div 
-          className="absolute left-8 top-0 bottom-0 w-2 opacity-60 pointer-events-none shadow-sm"
-          style={{ backgroundColor: denom.theme.ribbonColor }}
-        />
-      )}
-
-      {/* Marco de Seguridad Delantero */}
-      <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-0.5">
-        <span className="text-[7px] tracking-wider uppercase font-bold text-slate-300 font-mono truncate max-w-[70px]">
-          {isCUP ? 'BCC' : isUSD ? 'USA FED' : 'BCE'}
-        </span>
-        <span className={`text-[9px] font-black font-mono ${denom.theme.text}`}>
-          ${denom.value}
+      {/* Cabecera del billete: Bandera + Emisor + Valor */}
+      <div className="flex items-center justify-between z-10">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm leading-none">{flag}</span>
+          <span className="text-[9px] font-mono font-black text-white/90 uppercase tracking-wider">
+            {denom.issuerCode}
+          </span>
+        </div>
+        <span className={`text-xs font-black font-mono px-1.5 py-0.5 rounded shadow-sm bg-black/50 border border-white/20 ${denom.textColor}`}>
+          ${denom.value.toLocaleString()}
         </span>
       </div>
 
-      {/* Centro: Personaje Histórico o Sello */}
-      <div className="relative z-10 flex items-center justify-between px-0.5 my-auto">
-        <div className="flex flex-col">
-          <span className="text-[8px] font-bold text-white/90 leading-tight truncate max-w-[80px]">
+      {/* Centro: Icono de Billete Grande + Nombre de Referencia */}
+      <div className="flex items-center gap-2 z-10 my-0.5">
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 shadow-md ${denom.iconBg} text-white border border-white/30`}>
+          <Banknote className="w-5 h-5 drop-shadow" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[11px] font-black text-white leading-tight truncate drop-shadow-sm">
             {denom.portrait}
           </span>
-          <span className="text-[6.5px] text-slate-400 font-mono">
-            {currency}
+          <span className="text-[9px] text-white/80 font-mono font-bold">
+            Billete {denom.value.toLocaleString()} {currency}
           </span>
-        </div>
-
-        {/* Emblema o Escudo Simulado */}
-        <div className="w-5 h-5 rounded-full border border-white/20 bg-white/5 flex items-center justify-center text-[7px] font-black text-amber-300">
-          ★
         </div>
       </div>
 
-      {/* Pie del billete: Denominación y contador activo */}
-      <div className="relative z-10 flex items-center justify-between pt-0.5 border-t border-white/10">
-        <span className={`text-[8px] font-black font-mono ${denom.theme.text}`}>
+      {/* Pie del billete: Indicador de unidades contadas */}
+      <div className="flex items-center justify-between z-10 pt-1 border-t border-white/20 text-[9px] font-mono">
+        <span className="text-white/80 font-bold">
           {denom.label}
         </span>
-        {count > 0 && (
-          <span className="bg-emerald-400 text-slate-950 font-black text-[8px] px-1 rounded-sm shadow-sm">
+        {count > 0 ? (
+          <span className="bg-emerald-300 text-slate-950 font-black text-[9px] px-1.5 py-0.2 rounded shadow font-mono">
             {count} uds
           </span>
+        ) : (
+          <span className="text-white/50 text-[8px]">0 uds</span>
         )}
       </div>
     </div>
