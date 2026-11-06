@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Building2,
   CheckCircle2,
-  RefreshCw
+  RefreshCw,
+  Zap
 } from 'lucide-react';
 import { 
   Transaction, 
@@ -104,13 +105,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         <div className="flex items-center gap-3">
           {hasPermission(activeUser, 'rates_edit') && (
-            <button
-              onClick={() => onNavigateTab('rates')}
-              className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition-colors cursor-pointer"
-            >
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-              <span>Ajustar Tasas del Día</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onNavigateTab('rates')}
+                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition-colors cursor-pointer"
+              >
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <span>Ajustar Tasas del Día</span>
+              </button>
+              <button
+                onClick={() => onNavigateTab('rates')}
+                className="flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-400 font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all cursor-pointer"
+                title="Sincronizar cotizaciones con elTOQUE (TRMI) mediante API oficial"
+              >
+                <Zap className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">elTOQUE API</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              </button>
+            </div>
           )}
 
           {hasPermission(activeUser, 'transactions_create') ? (
