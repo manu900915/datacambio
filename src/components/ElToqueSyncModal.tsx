@@ -13,7 +13,9 @@ import {
   ShieldCheck,
   Zap,
   Eye,
-  EyeOff
+  EyeOff,
+  ArrowDownLeft,
+  ArrowUpRight
 } from 'lucide-react';
 import { CurrencyCode, ExchangeRate, User } from '../types';
 import { eltoqueService, ElToqueRatesResponse, FALLBACK_TRMI_RATES } from '../services/eltoqueService';
@@ -38,7 +40,8 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<ElToqueRatesResponse | null>(null);
-  const [spreadCup, setSpreadCup] = useState<number>(5);
+  const [marginBelowBuy, setMarginBelowBuy] = useState<number>(5);
+  const [marginAboveSell, setMarginAboveSell] = useState<number>(5);
   const [customToken, setCustomToken] = useState<string>('');
   const [showToken, setShowToken] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'sync' | 'token_info'>('sync');
@@ -84,9 +87,14 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
 
   if (!isOpen) return null;
 
-  const previewUSD = eltoqueService.calculateRatesWithMargin(trmiUSD, spreadCup);
-  const previewEUR = eltoqueService.calculateRatesWithMargin(trmiEUR, spreadCup);
-  const previewMLC = eltoqueService.calculateRatesWithMargin(trmiMLC, spreadCup);
+  const previewUSD = eltoqueService.calculateRatesWithMargin(trmiUSD, marginBelowBuy, marginAboveSell);
+  const previewEUR = eltoqueService.calculateRatesWithMargin(trmiEUR, marginBelowBuy, marginAboveSell);
+  const previewMLC = eltoqueService.calculateRatesWithMargin(trmiMLC, marginBelowBuy, marginAboveSell);
+
+  const handleApplyPresetMargins = (below: number, above: number) => {
+    setMarginBelowBuy(below);
+    setMarginAboveSell(above);
+  };
 
   const handleApplyAll = () => {
     const updates = [
@@ -110,7 +118,10 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
       }
     ];
 
-    onApplyRates(updates, `Sincronización automatizada con elTOQUE (TRMI) - Margen ±${spreadCup} CUP`);
+    onApplyRates(
+      updates, 
+      `Sincronización elTOQUE (TRMI) - Compra: -${marginBelowBuy} CUP / Venta: +${marginAboveSell} CUP (Margen: ${marginBelowBuy + marginAboveSell} CUP)`
+    );
     onClose();
   };
 
@@ -217,47 +228,180 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
                 </div>
               </div>
 
-              {/* Selector de Margen Comercial (Spread de la casa) */}
-              <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                    <Sliders className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Margen Comercial de la Mesa (Spread CUP):</span>
-                  </label>
-                  <span className="text-xs font-mono font-bold text-emerald-400">
-                    ±{spreadCup} CUP
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="range"
-                    min="1"
-                    max="25"
-                    step="1"
-                    value={spreadCup}
-                    onChange={(e) => setSpreadCup(parseInt(e.target.value) || 5)}
-                    className="flex-1 accent-emerald-500 cursor-pointer"
-                  />
-                  <div className="flex items-center gap-1">
-                    {[2, 3, 5, 8, 10].map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setSpreadCup(val)}
-                        className={`px-2 py-0.5 text-[11px] rounded font-mono font-medium border transition-colors cursor-pointer ${
-                          spreadCup === val
-                            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        ±{val}
-                      </button>
-                    ))}
+              {/* Selector de Margen Comercial Asimétrico (Monto por debajo para compra y por encima para venta) */}
+              <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <Sliders className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-bold text-slate-200">
+                      Márgenes Comerciales sobre elTOQUE TRMI:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-slate-400">Spread Total de Ganancia:</span>
+                    <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">
+                      +{(marginBelowBuy + marginAboveSell).toFixed(1)} CUP / unidad
+                    </span>
                   </div>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-2">
-                  Fórmula: <strong className="text-slate-300">Compra</strong> = TRMI - {spreadCup} CUP | <strong className="text-slate-300">Venta</strong> = TRMI + {spreadCup} CUP. Spread total: {spreadCup * 2} CUP por unidad negociada.
-                </p>
+
+                {/* Plantillas Rápidas de Márgenes */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mr-1">
+                    Presets frecuentes:
+                  </span>
+                  {[
+                    { label: '±5 Simétrico', below: 5, above: 5 },
+                    { label: '±10 Simétrico', below: 10, above: 10 },
+                    { label: '-5 Compra / +10 Venta', below: 5, above: 10 },
+                    { label: '-5 Compra / +15 Venta', below: 5, above: 15 },
+                    { label: '-10 Compra / +15 Venta', below: 10, above: 15 },
+                    { label: '-10 Compra / +20 Venta', below: 10, above: 20 },
+                    { label: '0 / 0 (Paridad)', below: 0, above: 0 }
+                  ].map((p, idx) => {
+                    const isSelected = marginBelowBuy === p.below && marginAboveSell === p.above;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleApplyPresetMargins(p.below, p.above)}
+                        className={`px-2.5 py-1 text-[11px] rounded-lg font-mono transition-colors cursor-pointer border ${
+                          isSelected
+                            ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Grid 2 Columnas: Por Debajo (Compra) y Por Encima (Venta) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+                  {/* Columna Compra: Monto por DEBAJO */}
+                  <div className="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-500/30 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                        <ArrowDownLeft className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Monto por DEBAJO (Compra)</span>
+                      </label>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-mono font-bold text-emerald-300">
+                          -{marginBelowBuy}
+                        </span>
+                        <span className="text-[10px] text-slate-400">CUP</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="35"
+                        step="0.5"
+                        value={marginBelowBuy}
+                        onChange={(e) => setMarginBelowBuy(parseFloat(e.target.value) || 0)}
+                        className="flex-1 accent-emerald-500 cursor-pointer"
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={marginBelowBuy}
+                        onChange={(e) => setMarginBelowBuy(Math.max(0, parseFloat(e.target.value) || 0))}
+                        className="w-14 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-emerald-400 text-right focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className="text-[10px] text-slate-500 mr-1">Rápido:</span>
+                      {[0, 2, 3, 5, 8, 10, 15, 20].map((val) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setMarginBelowBuy(val)}
+                          className={`px-1.5 py-0.5 text-[10px] rounded font-mono font-medium border transition-colors cursor-pointer ${
+                            marginBelowBuy === val
+                              ? 'bg-emerald-500/25 border-emerald-500 text-emerald-300 font-bold'
+                              : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {val === 0 ? '0' : `-${val}`}
+                        </button>
+                      ))}
+                    </div>
+
+                    <p className="text-[10px] text-slate-400 leading-tight">
+                      Pagamos al cliente: <strong className="text-emerald-300">TRMI - {marginBelowBuy} CUP</strong>. A mayor monto por debajo, menor costo de adquisición.
+                    </p>
+                  </div>
+
+                  {/* Columna Venta: Monto por ENCIMA */}
+                  <div className="bg-slate-900/90 p-3.5 rounded-xl border border-blue-500/30 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-blue-400 flex items-center gap-1">
+                        <ArrowUpRight className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Monto por ENCIMA (Venta)</span>
+                      </label>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-mono font-bold text-blue-300">
+                          +{marginAboveSell}
+                        </span>
+                        <span className="text-[10px] text-slate-400">CUP</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="35"
+                        step="0.5"
+                        value={marginAboveSell}
+                        onChange={(e) => setMarginAboveSell(parseFloat(e.target.value) || 0)}
+                        className="flex-1 accent-blue-500 cursor-pointer"
+                      />
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={marginAboveSell}
+                        onChange={(e) => setMarginAboveSell(Math.max(0, parseFloat(e.target.value) || 0))}
+                        className="w-14 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-blue-400 text-right focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className="text-[10px] text-slate-500 mr-1">Rápido:</span>
+                      {[0, 2, 3, 5, 8, 10, 15, 20].map((val) => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setMarginAboveSell(val)}
+                          className={`px-1.5 py-0.5 text-[10px] rounded font-mono font-medium border transition-colors cursor-pointer ${
+                            marginAboveSell === val
+                              ? 'bg-blue-500/25 border-blue-500 text-blue-300 font-bold'
+                              : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {val === 0 ? '0' : `+${val}`}
+                        </button>
+                      ))}
+                    </div>
+
+                    <p className="text-[10px] text-slate-400 leading-tight">
+                      Cobramos al cliente: <strong className="text-blue-300">TRMI + {marginAboveSell} CUP</strong>. A mayor monto por encima, mayor margen de venta.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-[11px] text-slate-300 font-mono">
+                  <span>Fórmula aplicada:</span>
+                  <span>
+                    Compra: <strong className="text-emerald-400">TRMI - {marginBelowBuy} CUP</strong> | Venta: <strong className="text-blue-400">TRMI + {marginAboveSell} CUP</strong>
+                  </span>
+                </div>
               </div>
 
               {/* Grid de Cotizaciones Calculadas con edición opcional de TRMI */}
@@ -280,18 +424,28 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
                           type="number"
                           value={trmiUSD}
                           onChange={(e) => setTrmiUSD(parseFloat(e.target.value) || 0)}
-                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-emerald-400 text-right focus:outline-none focus:border-emerald-500"
+                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-amber-400 text-right focus:outline-none focus:border-amber-500"
                         />
                       </div>
                     </div>
-                    <div className="space-y-1.5 font-mono text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Compra:</span>
-                        <span className="font-bold text-emerald-400 text-sm">${previewUSD.buyRate} CUP</span>
+                    <div className="space-y-2 font-mono text-xs">
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Compra</span>
+                          <span className="text-[10px] text-emerald-400 font-bold">(-{marginBelowBuy})</span>
+                        </div>
+                        <span className="font-black text-emerald-400 text-sm">${previewUSD.buyRate} CUP</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Venta:</span>
-                        <span className="font-bold text-blue-400 text-sm">${previewUSD.sellRate} CUP</span>
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Venta</span>
+                          <span className="text-[10px] text-blue-400 font-bold">(+{marginAboveSell})</span>
+                        </div>
+                        <span className="font-black text-blue-400 text-sm">${previewUSD.sellRate} CUP</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 px-0.5">
+                        <span>Margen total:</span>
+                        <span className="text-amber-300 font-bold">+{previewUSD.totalSpread} CUP</span>
                       </div>
                     </div>
                   </div>
@@ -306,18 +460,28 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
                           type="number"
                           value={trmiEUR}
                           onChange={(e) => setTrmiEUR(parseFloat(e.target.value) || 0)}
-                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-emerald-400 text-right focus:outline-none focus:border-emerald-500"
+                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-amber-400 text-right focus:outline-none focus:border-amber-500"
                         />
                       </div>
                     </div>
-                    <div className="space-y-1.5 font-mono text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Compra:</span>
-                        <span className="font-bold text-emerald-400 text-sm">${previewEUR.buyRate} CUP</span>
+                    <div className="space-y-2 font-mono text-xs">
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Compra</span>
+                          <span className="text-[10px] text-emerald-400 font-bold">(-{marginBelowBuy})</span>
+                        </div>
+                        <span className="font-black text-emerald-400 text-sm">${previewEUR.buyRate} CUP</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Venta:</span>
-                        <span className="font-bold text-blue-400 text-sm">${previewEUR.sellRate} CUP</span>
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Venta</span>
+                          <span className="text-[10px] text-blue-400 font-bold">(+{marginAboveSell})</span>
+                        </div>
+                        <span className="font-black text-blue-400 text-sm">${previewEUR.sellRate} CUP</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 px-0.5">
+                        <span>Margen total:</span>
+                        <span className="text-amber-300 font-bold">+{previewEUR.totalSpread} CUP</span>
                       </div>
                     </div>
                   </div>
@@ -332,18 +496,28 @@ export const ElToqueSyncModal: React.FC<ElToqueSyncModalProps> = ({
                           type="number"
                           value={trmiMLC}
                           onChange={(e) => setTrmiMLC(parseFloat(e.target.value) || 0)}
-                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-emerald-400 text-right focus:outline-none focus:border-emerald-500"
+                          className="w-16 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-mono font-bold text-amber-400 text-right focus:outline-none focus:border-amber-500"
                         />
                       </div>
                     </div>
-                    <div className="space-y-1.5 font-mono text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Compra:</span>
-                        <span className="font-bold text-emerald-400 text-sm">${previewMLC.buyRate} CUP</span>
+                    <div className="space-y-2 font-mono text-xs">
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Compra</span>
+                          <span className="text-[10px] text-emerald-400 font-bold">(-{marginBelowBuy})</span>
+                        </div>
+                        <span className="font-black text-emerald-400 text-sm">${previewMLC.buyRate} CUP</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400 text-[11px]">Venta:</span>
-                        <span className="font-bold text-blue-400 text-sm">${previewMLC.sellRate} CUP</span>
+                      <div className="flex justify-between items-center bg-slate-900/60 p-1.5 rounded-lg border border-slate-800/80">
+                        <div className="flex items-center gap-1">
+                          <span className="text-slate-400 text-[10px]">Venta</span>
+                          <span className="text-[10px] text-blue-400 font-bold">(+{marginAboveSell})</span>
+                        </div>
+                        <span className="font-black text-blue-400 text-sm">${previewMLC.sellRate} CUP</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 px-0.5">
+                        <span>Margen total:</span>
+                        <span className="text-amber-300 font-bold">+{previewMLC.totalSpread} CUP</span>
                       </div>
                     </div>
                   </div>

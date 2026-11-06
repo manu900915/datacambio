@@ -150,15 +150,20 @@ export const eltoqueService = {
 
   /**
    * Calcula cotizaciones sugeridas de compra y venta a partir de la tasa mediana informal TRMI
-   * aplicando el margen comercial (spread) predeterminado o personalizado.
+   * aplicando montos independientes por debajo (para compra) y por encima (para venta).
    */
   calculateRatesWithMargin(
     trmiRate: number,
-    spreadCup: number = 5
-  ): { buyRate: number; sellRate: number } {
+    marginBelowBuy: number = 5,
+    marginAboveSell: number = 5
+  ): { buyRate: number; sellRate: number; totalSpread: number } {
+    const buy = Math.max(1, +(trmiRate - marginBelowBuy).toFixed(1));
+    const sell = Math.max(1, +(trmiRate + marginAboveSell).toFixed(1));
     return {
-      buyRate: Math.max(1, +(trmiRate - spreadCup).toFixed(1)),
-      sellRate: Math.max(1, +(trmiRate + spreadCup).toFixed(1))
+      buyRate: buy,
+      sellRate: sell,
+      totalSpread: +(marginBelowBuy + marginAboveSell).toFixed(1)
     };
   }
 };
+

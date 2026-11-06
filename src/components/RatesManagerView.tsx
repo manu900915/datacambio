@@ -21,6 +21,7 @@ import {
 import { ExchangeRate, RateHistoryItem, User, CurrencyCode } from '../types';
 import { hasPermission } from '../services/storage';
 import { ElToqueSyncModal } from './ElToqueSyncModal';
+import { FALLBACK_TRMI_RATES } from '../services/eltoqueService';
 
 interface RatesManagerViewProps {
   rates: ExchangeRate[];
@@ -72,6 +73,16 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
     setBuyRateStr(String(buy));
     setSellRateStr(String(sell));
     setNote(`Ajuste según ${presetName}`);
+  };
+
+  const currentTrmi = (FALLBACK_TRMI_RATES as any)[selectedCurrency] || currentSelectedRate.marketReference || 930;
+
+  const handleApplyMarginFromTRMI = (below: number, above: number) => {
+    const buy = Math.max(1, +(currentTrmi - below).toFixed(1));
+    const sell = Math.max(1, +(currentTrmi + above).toFixed(1));
+    setBuyRateStr(String(buy));
+    setSellRateStr(String(sell));
+    setNote(`elTOQUE TRMI ($${currentTrmi}) con Compra: -${below} CUP / Venta: +${above} CUP`);
   };
 
   const numBuyRate = parseFloat(buyRateStr) || 0;
@@ -200,6 +211,46 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
 
           {/* Edit Rates Inputs */}
           <form onSubmit={handleSave} className="space-y-5">
+            {/* Asistente de Margen Asimétrico sobre TRMI de elTOQUE */}
+            <div className="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="font-bold text-slate-200">
+                    Ajustar Márgenes sobre elTOQUE TRMI ({selectedCurrency}: ${currentTrmi} CUP):
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  Compra: -Debajo | Venta: +Encima
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mr-1">
+                  Márgenes rápidos:
+                </span>
+                {[
+                  { label: '±5 Simétrico', below: 5, above: 5 },
+                  { label: '±10 Simétrico', below: 10, above: 10 },
+                  { label: '-5 Compra / +10 Venta', below: 5, above: 10 },
+                  { label: '-5 Compra / +15 Venta', below: 5, above: 15 },
+                  { label: '-10 Compra / +15 Venta', below: 10, above: 15 },
+                  { label: '-10 Compra / +20 Venta', below: 10, above: 20 },
+                  { label: 'Paridad (0/0)', below: 0, above: 0 }
+                ].map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={!canEditRates}
+                    onClick={() => handleApplyMarginFromTRMI(item.below, item.above)}
+                    className="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-[11px] font-mono text-slate-300 hover:text-white border border-slate-700/80 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Tasa Compra */}
               <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800/80">
@@ -362,17 +413,31 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(925, 935, 'elTOQUE TRMI Informal')}
+                      onClick={() => handlePreset(925, 935, 'elTOQUE Simétrico (-5 / +5 CUP)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE Hoy (925 / 935 CUP)
+                      elTOQUE Hoy (-5 / +5) [925 / 935 CUP]
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(920, 930, 'Habana Centro Mayorista')}
+                      onClick={() => handlePreset(925, 945, 'elTOQUE Asimétrico (-5 Compra / +15 Venta)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Habana Centro (920 / 930 CUP)
+                      elTOQUE Venta Fuerte (-5 / +15) [925 / 945 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(920, 945, 'elTOQUE Asimétrico (-10 Compra / +15 Venta)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      elTOQUE Conservador (-10 / +15) [920 / 945 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(920, 940, 'Habana Centro Mayorista (-10 / +10)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      Habana Centro (920 / 940 CUP)
                     </button>
                     <button
                       type="button"
@@ -387,17 +452,31 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(1010, 1020, 'elTOQUE Euro TRMI')}
+                      onClick={() => handlePreset(1010, 1020, 'elTOQUE Euro Simétrico (-5 / +5 CUP)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE Euro (1010 / 1020 CUP)
+                      elTOQUE Euro (-5 / +5) [1010 / 1020 CUP]
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(1005, 1015, 'Remesas España / Europa')}
+                      onClick={() => handlePreset(1010, 1030, 'elTOQUE Euro Asimétrico (-5 Compra / +15 Venta)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Remesas Europa (1005 / 1015 CUP)
+                      elTOQUE Euro Venta Fuerte (-5 / +15) [1010 / 1030 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(1005, 1030, 'elTOQUE Euro Conservador (-10 Compra / +15 Venta)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      elTOQUE Euro (-10 / +15) [1005 / 1030 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(1005, 1025, 'Remesas España / Europa (-10 / +10)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      Remesas Europa (1005 / 1025 CUP)
                     </button>
                   </>
                 )}
@@ -405,17 +484,31 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(702, 712, 'elTOQUE MLC TRMI')}
+                      onClick={() => handlePreset(701.8, 711.8, 'elTOQUE MLC Simétrico (-5 / +5 CUP)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE MLC (702 / 712 CUP)
+                      elTOQUE MLC (-5 / +5) [702 / 712 CUP]
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(700, 710, 'Transferencias Bandec')}
+                      onClick={() => handlePreset(701.8, 721.8, 'elTOQUE MLC Asimétrico (-5 Compra / +15 Venta)')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Bandec Tarjeta (700 / 710 CUP)
+                      elTOQUE MLC (-5 / +15) [702 / 722 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(696.8, 721.8, 'elTOQUE MLC Conservador (-10 Compra / +15 Venta)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      elTOQUE MLC (-10 / +15) [697 / 722 CUP]
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePreset(700, 715, 'Transferencias Bandec (-7 / +8)')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      Bandec Tarjeta (700 / 715 CUP)
                     </button>
                   </>
                 )}
