@@ -74,14 +74,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const totalEURInAccounts = accounts.filter(a => a.currency === 'EUR').reduce((sum, a) => sum + a.balance, 0);
 
   // Approximate valuation in CUP
-  const usdRate = rates.find(r => r.currency === 'USD')?.buyRate || 325;
-  const eurRate = rates.find(r => r.currency === 'EUR')?.buyRate || 350;
-  const mlcRate = rates.find(r => r.currency === 'MLC')?.buyRate || 275;
+  const usdRate = rates.find(r => r.currency === 'USD')?.buyRate || 925;
+  const eurRate = rates.find(r => r.currency === 'EUR')?.buyRate || 1010;
+  const mlcRate = rates.find(r => r.currency === 'MLC')?.buyRate || 702;
   const totalValuationCUP = totalCUPInAccounts + (totalUSDInAccounts * usdRate) + (totalEURInAccounts * eurRate) + (totalMLCInAccounts * mlcRate);
 
   // Calculator computation
   const activeRate = rates.find(r => r.currency === calcCurrency);
-  const appliedCalcRate = activeRate ? (calcType === 'compra' ? activeRate.buyRate : activeRate.sellRate) : 325;
+  const appliedCalcRate = activeRate ? (calcType === 'compra' ? activeRate.buyRate : activeRate.sellRate) : 925;
   const calcResultCUP = Math.round((parseFloat(calcAmount) || 0) * appliedCalcRate);
 
   return (

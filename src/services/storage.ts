@@ -208,37 +208,37 @@ export const INITIAL_RATES: ExchangeRate[] = [
     currency: 'USD',
     name: 'Dólar Estadounidense',
     symbol: '$',
-    buyRate: 325,
-    sellRate: 335,
-    lastUpdated: '2026-10-31 08:00:00',
-    updatedBy: 'Enmanuel Caraballo (admin)',
-    minRate: 300,
-    maxRate: 360,
-    marketReference: 330
+    buyRate: 925,
+    sellRate: 935,
+    lastUpdated: '2026-11-06 15:52:00',
+    updatedBy: 'elTOQUE TRMI Oficial',
+    minRate: 800,
+    maxRate: 1100,
+    marketReference: 930
   },
   {
     currency: 'EUR',
     name: 'Euro Comunitario',
     symbol: '€',
-    buyRate: 350,
-    sellRate: 362,
-    lastUpdated: '2026-10-31 08:00:00',
-    updatedBy: 'Enmanuel Caraballo (admin)',
-    minRate: 320,
-    maxRate: 380,
-    marketReference: 355
+    buyRate: 1010,
+    sellRate: 1020,
+    lastUpdated: '2026-11-06 15:52:00',
+    updatedBy: 'elTOQUE TRMI Oficial',
+    minRate: 900,
+    maxRate: 1200,
+    marketReference: 1015
   },
   {
     currency: 'MLC',
     name: 'Moneda Libremente Convertible',
     symbol: 'MLC',
-    buyRate: 275,
-    sellRate: 283,
-    lastUpdated: '2026-10-31 08:00:00',
-    updatedBy: 'Enmanuel Caraballo (admin)',
-    minRate: 250,
-    maxRate: 300,
-    marketReference: 280
+    buyRate: 702,
+    sellRate: 712,
+    lastUpdated: '2026-11-06 15:52:00',
+    updatedBy: 'elTOQUE TRMI Oficial',
+    minRate: 600,
+    maxRate: 850,
+    marketReference: 706.87
   }
 ];
 

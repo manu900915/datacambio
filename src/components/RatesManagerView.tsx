@@ -362,17 +362,17 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(325, 335, 'elTOQUE Promedio Informal')}
+                      onClick={() => handlePreset(925, 935, 'elTOQUE TRMI Informal')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE Hoy (325 / 335 CUP)
+                      elTOQUE Hoy (925 / 935 CUP)
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(320, 330, 'Habana Centro Mayorista')}
+                      onClick={() => handlePreset(920, 930, 'Habana Centro Mayorista')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Habana Centro (320 / 330 CUP)
+                      Habana Centro (920 / 930 CUP)
                     </button>
                     <button
                       type="button"
@@ -387,17 +387,17 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(350, 362, 'elTOQUE Euro')}
+                      onClick={() => handlePreset(1010, 1020, 'elTOQUE Euro TRMI')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE Euro (350 / 362 CUP)
+                      elTOQUE Euro (1010 / 1020 CUP)
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(345, 358, 'Remesas España')}
+                      onClick={() => handlePreset(1005, 1015, 'Remesas España / Europa')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Remesas Europa (345 / 358 CUP)
+                      Remesas Europa (1005 / 1015 CUP)
                     </button>
                   </>
                 )}
@@ -405,17 +405,17 @@ export const RatesManagerView: React.FC<RatesManagerViewProps> = ({
                   <>
                     <button
                       type="button"
-                      onClick={() => handlePreset(275, 283, 'elTOQUE MLC')}
+                      onClick={() => handlePreset(702, 712, 'elTOQUE MLC TRMI')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      elTOQUE MLC (275 / 283 CUP)
+                      elTOQUE MLC (702 / 712 CUP)
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePreset(270, 280, 'Transferencias Bandec')}
+                      onClick={() => handlePreset(700, 710, 'Transferencias Bandec')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-700 transition-colors cursor-pointer"
                     >
-                      Bandec Tarjeta (270 / 280 CUP)
+                      Bandec Tarjeta (700 / 710 CUP)
                     </button>
                   </>
                 )}
