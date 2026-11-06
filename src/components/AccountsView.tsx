@@ -12,9 +12,12 @@ import {
   Trash2,
   X,
   ShieldAlert,
-  Info
+  Info,
+  Coins,
+  Calculator
 } from 'lucide-react';
 import { Account, User, CurrencyCode, AccountType } from '../types';
+import { BanknoteCounter } from './BanknoteCounter';
 
 interface AccountsViewProps {
   accounts: Account[];
@@ -37,6 +40,8 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
   const [arqueoNotes, setArqueoNotes] = useState<string>('');
   const [arqueoResultMsg, setArqueoResultMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [countingMode, setCountingMode] = useState<'denominations' | 'manual'>('denominations');
+  const [denominationBreakdown, setDenominationBreakdown] = useState<string>('');
 
   // New Account Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
@@ -57,6 +62,13 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
 
   const canManageAccounts = activeUser.role === 'admin' || activeUser.role === 'desarrollador';
 
+  const handleBanknoteTotalChange = (total: number, breakdown: string) => {
+    if (countingMode === 'denominations') {
+      setPhysicalCount(total > 0 ? String(total) : '');
+      setDenominationBreakdown(breakdown);
+    }
+  };
+
   const handleApplyArqueo = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAccount) return;
@@ -66,12 +78,16 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
       return;
     }
 
-    const reason = `Arqueo de caja físico: Conteo real ${numPhysicalCount} ${selectedAccount.currency} (Diferencia: ${difference >= 0 ? '+' : ''}${difference}). Nota: ${arqueoNotes || 'Cuadre ordinario'}`;
+    const noteParts = [arqueoNotes.trim(), denominationBreakdown.trim()].filter(Boolean);
+    const finalNote = noteParts.length > 0 ? noteParts.join(' • ') : 'Cuadre ordinario';
+
+    const reason = `Arqueo de caja físico: Conteo real ${numPhysicalCount} ${selectedAccount.currency} (Diferencia: ${difference >= 0 ? '+' : ''}${difference}). Nota: ${finalNote}`;
     onUpdateAccountBalance(selectedAccount.id, numPhysicalCount, reason);
 
     setArqueoResultMsg(`Arqueo registrado exitosamente en "${selectedAccount.name}". Saldo actualizado a $${numPhysicalCount.toLocaleString()} ${selectedAccount.currency}.`);
     setPhysicalCount('');
     setArqueoNotes('');
+    setDenominationBreakdown('');
     setTimeout(() => setArqueoResultMsg(null), 5000);
   };
 
@@ -241,28 +257,83 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
         </div>
 
         <form onSubmit={handleApplyArqueo} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Seleccionar Caja o Cuenta para Cuadre:
-              </label>
-              <select
-                value={selectedArqueoAccountId}
-                onChange={(e) => setSelectedArqueoAccountId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
-              >
-                {accounts.map(a => (
-                  <option key={a.id} value={a.id}>
-                    {a.name} — Saldo en Sistema: ${a.balance.toLocaleString()} {a.currency}
-                  </option>
-                ))}
-              </select>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Seleccionar Caja o Cuenta para Cuadre:
+                </label>
+                <select
+                  value={selectedArqueoAccountId}
+                  onChange={(e) => {
+                    setSelectedArqueoAccountId(e.target.value);
+                    setPhysicalCount('');
+                    setDenominationBreakdown('');
+                  }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                >
+                  {accounts.map(a => (
+                    <option key={a.id} value={a.id}>
+                      {a.name} ({a.currency}) — Saldo en Sistema: ${a.balance.toLocaleString()} {a.currency}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Modalidad de Conteo:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCountingMode('denominations')}
+                    className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                      countingMode === 'denominations'
+                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Coins className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Conteo por Billetes</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCountingMode('manual')}
+                    className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                      countingMode === 'manual'
+                        ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-sm'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Monto Directo</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
+            {/* Módulo de Conteo por Billetes (CUP: 1 a 20000, USD: 1 a 100) */}
+            {countingMode === 'denominations' && (
+              <BanknoteCounter
+                currency={selectedAccount?.currency || 'CUP'}
+                onTotalChange={handleBanknoteTotalChange}
+              />
+            )}
+
+            {/* Campo de Conteo Físico Real (Editable en manual, sincronizado en billetes) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Conteo Físico Real / Saldo en Banca Móvil ({selectedAccount?.currency}):
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-slate-300">
+                  Total Conteo Físico Real ({selectedAccount?.currency}):
+                </label>
+                {countingMode === 'denominations' && (
+                  <span className="text-[11px] text-emerald-400 font-mono">
+                    Sincronizado automáticamente desde el conteo de billetes
+                  </span>
+                )}
+              </div>
               <div className="relative">
                 <input
                   type="number"
@@ -274,8 +345,8 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
                     const clean = val === '' ? '' : (val === '0' || val.startsWith('0.')) ? val : val.replace(/^0+([1-9])/, '$1');
                     setPhysicalCount(clean);
                   }}
-                  placeholder="Ingresa la cantidad real contada..."
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-3 pr-20 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-emerald-500"
+                  placeholder="0.00"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-3 pr-24 py-2 text-base font-mono font-black text-white focus:outline-none focus:border-emerald-500"
                   required
                 />
                 <div className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-slate-800 border border-slate-700/80 px-2 py-0.5 rounded text-xs font-mono font-bold text-slate-300 pointer-events-none select-none">
@@ -324,6 +395,13 @@ export const AccountsView: React.FC<AccountsViewProps> = ({
               className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
             />
           </div>
+
+          {denominationBreakdown && (
+            <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-300 font-mono flex items-center justify-between gap-2">
+              <span className="text-slate-400 shrink-0">Desglose adjunto a la auditoría:</span>
+              <span className="text-emerald-400 font-semibold truncate text-right">{denominationBreakdown}</span>
+            </div>
+          )}
 
           <div className="flex justify-end">
             <button
